@@ -1,0 +1,35 @@
+# fly.toml — konfigurasi deploy Fly.io untuk bot WhatsApp
+# Dokumentasi: https://fly.io/docs/reference/configuration/
+
+app = "karamoy-wa"
+primary_region = "sin"  # Singapore — paling dekat dengan Indonesia
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+
+# Bot WA tidak butuh HTTP, tapi Fly.io butuh minimal 1 check
+# Kita nonaktifkan HTTP service dan pakai tcp check sederhana
+[[services]]
+  internal_port = 3000
+  protocol = "tcp"
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[services.tcp_checks]]
+    grace_period = "30s"
+    interval = "60s"
+    timeout = "5s"
+
+[mounts]
+  source = "wa_session"
+  destination = "/app/session"
+
+[resources]
+  [resources.limits]
+    memory = "512mb"
+    cpu_kind = "shared"
+    cpus = 1
