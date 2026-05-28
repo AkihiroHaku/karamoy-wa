@@ -1,0 +1,8 @@
+node_modules/
+session/
+bot.pid
+*.pid
+*.log
+.env
+.env.local
+.env.*.local
