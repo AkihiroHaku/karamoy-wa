@@ -5,9 +5,10 @@ module.exports = {
   // Path folder session Baileys
   SESSION_PATH: "session",
 
-  // Nomor telepon untuk pairing code (opsional, dari argument CLI)
-  // Contoh: node index.js 628123456789
-  PHONE_NUMBER: process.argv[2]?.replace(/\D/g, ""),
+  // Nomor telepon untuk pairing code
+  // Bisa dari env variable PHONE_NUMBER (Railway/hosting) atau argumen CLI (lokal)
+  // Contoh lokal: node index.js 628123456789
+  PHONE_NUMBER: (process.env.PHONE_NUMBER || process.argv[2] || "").replace(/\D/g, "") || undefined,
 
   // Batas maksimal durasi video yang bisa dijadikan stiker (detik)
   MAX_VIDEO_SECONDS: 10,
