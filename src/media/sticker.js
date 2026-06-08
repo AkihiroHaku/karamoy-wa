@@ -39,11 +39,25 @@ async function videoToSticker(buffer) {
 
   try {
     await new Promise((resolve, reject) => {
+      const S = STICKER_SIZE
+      const FPS = DEFAULT_STICKER_FPS
+
+      // Filter complex:
+      // [bg] — video diperbesar & di-blur, dipakai sebagai latar
+      // [fg] — video asli diperkecil agar muat penuh tanpa crop
+      // overlay — tempel fg di tengah bg
+      const filterComplex = [
+        `[0:v]scale=${S}:${S}:force_original_aspect_ratio=increase,crop=${S}:${S},gblur=sigma=20[bg]`,
+        `[0:v]scale=${S}:${S}:force_original_aspect_ratio=decrease[fg]`,
+        `[bg][fg]overlay=(W-w)/2:(H-h)/2,fps=${FPS}[out]`,
+      ].join(";")
+
       ffmpeg(inputPath)
         .duration(10)
         .outputOptions([
           "-vcodec libwebp",
-          `-vf scale=${STICKER_SIZE}:${STICKER_SIZE}:force_original_aspect_ratio=decrease,fps=${DEFAULT_STICKER_FPS},pad=${STICKER_SIZE}:${STICKER_SIZE}:-1:-1:color=0x00000000`,
+          "-filter_complex", filterComplex,
+          "-map", "[out]",
           "-loop 0",
           "-an",
           "-vsync 0",

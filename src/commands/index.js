@@ -4,10 +4,14 @@ const sticker = require("./sticker")
 const unsticker = require("./unsticker")
 const ai = require("./ai")
 const imagine = require("./imagine")
+const sauce = require("./sauce")
+const aiedit = require("./aiedit")
+const editsticker = require("./editsticker")
+const pixel = require("./pixel")
 
 // Daftarkan semua handler command di sini.
 // Untuk menambah command baru: buat file baru lalu tambahkan di array ini.
-const handlers = [ping, menu, sticker, unsticker, ai, imagine]
+const handlers = [ping, menu, sticker, unsticker, ai, imagine, sauce, aiedit, editsticker, pixel]
 
 /**
  * Dispatch pesan ke handler command yang sesuai.

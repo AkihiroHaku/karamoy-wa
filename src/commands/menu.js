@@ -1,5 +1,10 @@
 const os = require("os")
+const fs = require("fs")
+const path = require("path")
 const { MAX_VIDEO_SECONDS, AI_RATE_LIMIT } = require("../config")
+
+// Path logo bot — letakkan file gambar di sini
+const LOGO_PATH = path.join(__dirname, "../../assets/logo.jpeg")
 
 /**
  * Menghitung uptime proses Node.js dan mengubahnya ke format yang mudah dibaca.
@@ -32,7 +37,84 @@ function buildMenuText() {
     timeStyle: "short",
   })
 
-  return `gada menu dulu`
+  return `╔══════════════════════╗
+║   🥺  *KARAMOY BOT*   ║
+╚══════════════════════╝
+
+📅 *${now}*
+⏱️ Uptime: *${uptime}*
+💻 Platform: *${platform}*
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🛠️ *UMUM*
+━━━━━━━━━━━━━━━━━━━━━━━
+
+▸ *.menu* / *.help*
+  └ Tampilkan menu ini
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🎨 *STIKER*
+━━━━━━━━━━━━━━━━━━━━━━━
+▸ *.sticker* / *.s*
+  └ Ubah foto/video (maks ${MAX_VIDEO_SECONDS}d) jadi stiker
+  └ Kirim media + caption, atau reply media
+
+▸ *.toimg*
+  └ Ubah stiker → gambar PNG
+
+▸ *.tovideo*
+  └ Ubah stiker animasi → video MP4
+
+▸ *.togif*
+  └ Ubah stiker animasi → GIF
+
+▸ *.edits <teks>* — _(owner)_
+  └ Ganti/tambah teks pada stiker
+  └ _.edits Bagas_ → kotak putih di bawah
+  └ _.edits top Bagas_ → kotak putih di atas
+  └ _.edits center Bagas_ → kotak putih di tengah
+
+▸ *.pixel [ukuran]*
+  └ Buat efek pixelated pada gambar/stiker
+  └ _.pixel_    → blok 16px (default)
+  └ _.pixel 8_  → halus | _.pixel 32_ → blocky
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🤖 *AI CHAT*
+━━━━━━━━━━━━━━━━━━━━━━━
+▸ *.ai <pesan>*
+  └ Chat dengan AI (semua orang)
+  └ Batas: ${AI_RATE_LIMIT}x per jam
+
+▸ *.aireset*
+  └ Hapus memori percakapan AI
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🎨 *AI VISUAL* _(owner only)_
+━━━━━━━━━━━━━━━━━━━━━━━
+▸ *.imagine <deskripsi>*
+  └ Generate gambar dari teks
+
+▸ *.aiedit <instruksi>*
+  └ Edit gambar pakai AI 🪄
+  └ Reply atau kirim gambar + instruksi
+  └ Contoh: _.aiedit ubah jadi anime_
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔍 *CARI SUMBER* _(owner only)_
+━━━━━━━━━━━━━━━━━━━━━━━
+▸ *.sauce* / *.source*
+  └ Cari sumber gambar (reverse image)
+
+▸ *.anime*
+  └ Cari sumber screenshot anime
+  └ Hasil: judul, episode, timestamp
+
+━━━━━━━━━━━━━━━━━━━━━━━
+📌 *Cara pakai:*
+Ketik command, atau reply pesan
+dengan command yang sesuai.
+━━━━━━━━━━━━━━━━━━━━━━━`
 }
 
 /**
@@ -44,6 +126,15 @@ module.exports = {
 
   async handle(sock, msg) {
     const jid = msg.key.remoteJid
-    await sock.sendMessage(jid, { text: buildMenuText() }, { quoted: msg })
+    const caption = buildMenuText()
+
+    // Kirim sebagai gambar + caption jika logo tersedia
+    if (fs.existsSync(LOGO_PATH)) {
+      const image = fs.readFileSync(LOGO_PATH)
+      await sock.sendMessage(jid, { image, caption }, { quoted: msg })
+    } else {
+      // Fallback: teks biasa jika logo belum diletakkan
+      await sock.sendMessage(jid, { text: caption }, { quoted: msg })
+    }
   },
 }

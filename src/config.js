@@ -52,5 +52,14 @@ module.exports = {
 
   // Durasi window rate limit dalam menit
   AI_RATE_WINDOW_MINUTES: parseInt(process.env.AI_RATE_WINDOW_MINUTES || "60", 10),
+
+  // ── Reverse Image Search ─────────────────────────────────────
+  // API key SauceNAO — daftar gratis di saucenao.com/user.php?page=register
+  SAUCENAO_API_KEY: process.env.SAUCENAO_API_KEY || "",
+
+  // ── Hugging Face ─────────────────────────────────────────────
+  // Token gratis dari huggingface.co/settings/tokens (tipe: Read)
+  // Dipakai untuk .imagine (text-to-image) dan .aiedit (img2img)
+  HF_TOKEN: process.env.HF_TOKEN || "",
 }
 
